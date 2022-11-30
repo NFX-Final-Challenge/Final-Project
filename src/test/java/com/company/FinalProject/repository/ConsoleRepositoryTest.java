@@ -46,7 +46,7 @@ public class ConsoleRepositoryTest
 
         consoleRepository.deleteById(console.getId());
         testConsole = consoleRepository.findById(console.getId());
-        assertFalse(testConsole.isPresent());
+        Assert.assertFalse(testConsole.isPresent());
     }
 
     @Test
@@ -100,7 +100,7 @@ public class ConsoleRepositoryTest
         console3 = consoleRepository.save(console3);
 
         List<Console> allConsoles = consoleRepository.findAll();
-        assertEquals(allConsoles.size(),3);
+        Assertions.assertEquals(allConsoles.size(),3);
     }
 
     @Test
@@ -134,7 +134,7 @@ public class ConsoleRepositoryTest
         console3 = consoleRepository.save(console3);
 
         List<Console> listConsoles = consoleRepository.findAllConsolesByManufacturer("Sony");
-        assertEquals(listConsoles.size(),2);
+        Assertions.assertEquals(listConsoles.size(),2);
     }
 
 }
