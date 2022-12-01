@@ -1,6 +1,6 @@
 package com.company.FinalProject.controller;
 
-import com.company.FinalProject.model.Game;
+import com.company.FinalProject.models.Game;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.Before;
 import org.junit.jupiter.api.Test;

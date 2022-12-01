@@ -3,6 +3,8 @@ package com.company.FinalProject.models;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 import javax.persistence.*;
+import javax.validation.constraints.Min;
+import javax.validation.constraints.NotEmpty;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Objects;
@@ -17,6 +19,7 @@ public class Game implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
+    @NotEmpty(message = "You must enter a title for this game.")
     private String title;
 
     @Column(name = "esrb_rating")
@@ -25,6 +28,8 @@ public class Game implements Serializable {
     private String description;
     private BigDecimal price;
     private String studio;
+
+    @Min(value = 0, message = "Quantity cannot be negative")
     private Integer quantity;
 
     public Integer getId() {
