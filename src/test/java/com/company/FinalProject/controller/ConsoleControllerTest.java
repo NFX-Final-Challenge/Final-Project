@@ -1,6 +1,6 @@
 package com.company.FinalProject.controller;
 
-import com.company.FinalProject.model.Console;
+import com.company.FinalProject.models.Console;
 import com.company.FinalProject.repository.ConsoleRepository;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
