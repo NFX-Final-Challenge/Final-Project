@@ -39,7 +39,8 @@ public class GameController {
         if (returnVal.size() > 0) {
             return returnVal;
         } else {
-            return null;
+            throw new IllegalArgumentException("No game found with this title.");
+            //return null;
         }
     }
 
@@ -49,7 +50,8 @@ public class GameController {
         if (returnVal.size() > 0) {
             return returnVal;
         } else {
-            return null;
+            throw new IllegalArgumentException("No game found with this rating.");
+            //return null;
         }
     }
 
@@ -59,7 +61,8 @@ public class GameController {
         if (returnVal.size() > 0) {
             return returnVal;
         } else {
-            return null;
+            throw new IllegalArgumentException("No game found from this studio.");
+            //return null;
         }
     }
 
