@@ -1,6 +1,8 @@
 package com.company.FinalProject.repository;
 
 import com.company.FinalProject.models.Console;
+import com.company.FinalProject.repositories.ConsoleRepository;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -8,9 +10,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
-import java.io.Console;
 import java.math.BigDecimal;
 import java.util.List;
+import java.util.Optional;
 
 import static org.junit.Assert.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -46,7 +48,7 @@ public class ConsoleRepositoryTest
 
         consoleRepository.deleteById(console.getId());
         testConsole = consoleRepository.findById(console.getId());
-        Assert.assertFalse(testConsole.isPresent());
+        assertFalse(testConsole.isPresent());
     }
 
     @Test
@@ -100,7 +102,7 @@ public class ConsoleRepositoryTest
         console3 = consoleRepository.save(console3);
 
         List<Console> allConsoles = consoleRepository.findAll();
-        Assertions.assertEquals(allConsoles.size(),3);
+        assertEquals(allConsoles.size(),3);
     }
 
     @Test
@@ -134,7 +136,7 @@ public class ConsoleRepositoryTest
         console3 = consoleRepository.save(console3);
 
         List<Console> listConsoles = consoleRepository.findAllConsolesByManufacturer("Sony");
-        Assertions.assertEquals(listConsoles.size(),2);
+        assertEquals(listConsoles.size(),2);
     }
 
 }
