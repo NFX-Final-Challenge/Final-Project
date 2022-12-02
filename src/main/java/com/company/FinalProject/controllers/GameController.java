@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import java.util.List;
 import java.util.Optional;
 
@@ -16,7 +17,7 @@ public class GameController {
 
 
     @GetMapping("/games")
-    public List<Game> getGamess() {
+    public List<Game> getGames() {
         return repository.findAll();
     }
 
@@ -27,7 +28,8 @@ public class GameController {
         if (returnVal.isPresent()) {
             return returnVal.get();
         } else {
-            return null;
+            throw new IllegalArgumentException("No found game.");
+            //return null;
         }
     }
 
@@ -37,7 +39,8 @@ public class GameController {
         if (returnVal.size() > 0) {
             return returnVal;
         } else {
-            return null;
+            throw new IllegalArgumentException("No game found with this title.");
+            //return null;
         }
     }
 
@@ -47,7 +50,8 @@ public class GameController {
         if (returnVal.size() > 0) {
             return returnVal;
         } else {
-            return null;
+            throw new IllegalArgumentException("No game found with this rating.");
+            //return null;
         }
     }
 
@@ -57,7 +61,8 @@ public class GameController {
         if (returnVal.size() > 0) {
             return returnVal;
         } else {
-            return null;
+            throw new IllegalArgumentException("No game found from this studio.");
+            //return null;
         }
     }
 
@@ -65,7 +70,7 @@ public class GameController {
 
     @PostMapping("/games")
     @ResponseStatus(HttpStatus.CREATED)
-    public Game addGame(@RequestBody Game game) {
+    public Game addGame(@RequestBody @Valid Game game) {
         return repository.save(game);
     }
 

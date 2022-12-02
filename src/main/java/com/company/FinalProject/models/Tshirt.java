@@ -1,8 +1,12 @@
 package com.company.FinalProject.models;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import org.hibernate.validator.constraints.Length;
+import org.springframework.lang.NonNull;
 
 import javax.persistence.*;
+import javax.validation.constraints.Max;
+import javax.validation.constraints.NotEmpty;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Objects;
@@ -13,14 +17,28 @@ import java.util.Objects;
 public class Tshirt implements Serializable
 {
     // Variables
+    @NotEmpty
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int t_shirt_id;
 
+    @NotEmpty(message = "Must provide t-shirt size.")
+    @Length(max = 20, message = "Word too long.")
     private String size;
+
+    @NotEmpty(message = "Must provide t-shirt color")
+    @Length(max = 20,message = "Word too long.")
     private String color;
+
+    @NotEmpty(message = "Must provide a t-shirt description")
+    @Length(max = 255, message = "Description too long.")
     private String description;
+
+    @NotEmpty(message = "T-shirt must have a price.")
+    @Max(value = 999, message = "Number too large.")
     private BigDecimal price;
+
+    @NotEmpty(message = "Must provide how many t-shirts.")
     private int quantity;
 
 
