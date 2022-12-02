@@ -46,7 +46,7 @@ public class ServiceLayer {
         return null;
     }
 
-    private InvoiceViewModel buildInvoice(Invoice invoice) {
+    private Invoice buildInvoiceViewModel(Invoice invoice) {
 
         BigDecimal totalPrice = new BigDecimal(0);
         int inventory;
@@ -63,8 +63,7 @@ public class ServiceLayer {
             inventory = item.get().getQuantity();
             price = item.get().getPrice();
             if (quantity > inventory){
-                //throw new illlegalArg
-                return null;
+                throw new IllegalArgumentException("Not enough games in stock.");
             }
         }
 
@@ -74,8 +73,7 @@ public class ServiceLayer {
             inventory = item.get().getQuantity();
             price = item.get().getPrice();
             if (quantity > inventory){
-                //throw error?
-                return null;
+                throw new IllegalArgumentException("Not enough console in stock.");
             }}
 
         else if (invoice.getItem_type() == "tshirt") {
@@ -84,36 +82,51 @@ public class ServiceLayer {
             inventory = item.get().getQuantity();
             price = item.get().getPrice();
             if (quantity > inventory){
-                //throw error?
-                return null;
+                throw new IllegalArgumentException("Not enough tshirts in stock.");
             }}
 
         else {
-            //throw error?
-            return null;
+            throw new IllegalArgumentException("Item type not recognized.");
         }
 
         //Quantity ordered * price
-        BigDecimal quantityTimesPriceOfSingleItem = price.multiply(BigDecimal.valueOf(quantity));
+        BigDecimal subtotal = price.multiply(BigDecimal.valueOf(quantity));
 
         //Look up stateTax
         BigDecimal stateTax = salesTaxRepository.findRateByState(state);
         //Calculate sales tax/stateTax
-        BigDecimal stateTaxTotal =  stateTax.multiply(quantityTimesPriceOfSingleItem);
+        BigDecimal stateTaxTotal =  stateTax.multiply(subtotal);
 
         //Calculate processing fee
-        BigDecimal processingFeeTotal = BigDecimal.valueOf((quantity > 10 ? (15.49+1.49) : 1.49));
+        BigDecimal processingFeeForItem = processingFeeRepository.findFeeByProductType(invoice.getItem_type());
+        BigDecimal extraFee = new BigDecimal(15.49);
+        BigDecimal processingFeeTotal = (quantity > 10 ? (processingFeeForItem.add(extraFee)) : processingFeeForItem);
 
 
-        totalPrice = totalPrice.add(quantityTimesPriceOfSingleItem);
+        totalPrice = totalPrice.add(subtotal);
         totalPrice = totalPrice.add(stateTaxTotal);
         totalPrice = totalPrice.add(processingFeeTotal);
 
-        // Assemble the Invoice
-       
+        // Assemble the Invoice, missing id
+        Invoice newInvoice = new Invoice();
+        newInvoice.setCity(invoice.getCity());
+        newInvoice.setQuantity(invoice.getQuantity());
+        newInvoice.setItem_id(invoice.getItem_id());
+        newInvoice.setName(invoice.getName());
+        newInvoice.setState(invoice.getState());
+        newInvoice.setZipcode(invoice.getZipcode());
+        newInvoice.setStreet(invoice.getStreet());
+        newInvoice.setProcessing_fee(processingFeeTotal);
+        newInvoice.setItem_type(invoice.getItem_type());
+        newInvoice.setUnit_price(price);
+        newInvoice.setSubtotal(subtotal);
+        newInvoice.setTax(stateTaxTotal);
+        newInvoice.setProcessing_fee(processingFeeTotal);
+        newInvoice.setTotal(totalPrice);
 
         // Return the AlbumViewModel
-        return ivm;
+
+        return newInvoice;
     }
 
     public List<InvoiceViewModel> findAllInvoices() {
