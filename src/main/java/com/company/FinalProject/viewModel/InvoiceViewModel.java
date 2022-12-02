@@ -24,7 +24,7 @@ public class InvoiceViewModel {
     private String city;
 
     @NotEmpty(message = "Must enter a state.")
-    @Length(max = 2, message = "Must enter state's abbreviation.")
+    @Length(max = 2,min = 2, message = "Must enter state's abbreviation.")
     private String state;
 
     @NotEmpty(message = "Must enter a zipcode.")

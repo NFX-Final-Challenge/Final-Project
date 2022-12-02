@@ -1,8 +1,12 @@
 package com.company.FinalProject.models;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import org.hibernate.validator.constraints.Length;
 
 import javax.persistence.*;
+import javax.validation.constraints.Max;
+import javax.validation.constraints.Min;
+import javax.validation.constraints.NotEmpty;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Objects;
@@ -17,18 +21,47 @@ public class Invoice implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
 
+    @NotEmpty(message = "Must enter a name.")
     private String name;
+
+    @NotEmpty(message = "Must enter a street.")
     private String street;
+
+    @NotEmpty(message = "Must enter a city.")
     private String city;
+
+    @NotEmpty(message = "Must enter a state.")
+    @Length(min = 2, max = 2, message = "Must enter state's abbreviation.")
     private String state;
+
+    @NotEmpty(message = "Must enter a zipcode.")
+    @Min(value = 5, message = "Must be 5 digits.")
+    @Max(value = 5, message = "Must be 5 digits.")
     private String zipcode;
+
+    @NotEmpty(message = "Must specify item type.")
     private String item_type;
+
+    @NotEmpty(message = "Must specify item id.")
     private int item_id;
+
+    @NotEmpty(message = "Must have a unit price.")
     private BigDecimal unit_price;
+
+    @NotEmpty(message = "Must specify a quantity." )
+    @Min(value = 1, message = "Quantity must be greater than 0.")
     private int quantity;
+
+    @NotEmpty(message = "Must have a subtotal.")
     private BigDecimal subtotal;
+
+    @NotEmpty(message = "Must have sales tax.")
     private BigDecimal tax;
+
+    @NotEmpty(message = "Must have processing fee.")
     private BigDecimal processing_fee;
+
+    @NotEmpty(message = "Must have a total.")
     private BigDecimal total;
 
     public int getId() {
