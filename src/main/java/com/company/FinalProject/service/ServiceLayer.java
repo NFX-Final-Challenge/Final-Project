@@ -13,6 +13,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 import java.util.Optional;
 
 @Component
@@ -23,43 +24,36 @@ public class ServiceLayer {
     private TshirtRepository tshirtRepository;
     private ProcessingFeeRepository processingFeeRepository;
     private SalesTaxRepository salesTaxRepository;
+    private InvoiceRepository invoiceRepository;
 
     @Autowired
     public ServiceLayer(ConsoleRepository consoleRepository, GameRepository gameRepository,
-                        TshirtRepository tshirtRepository, ProcessingFeeRepository processingFeeRepository, SalesTaxRepository salesTaxRepository ) {
+                        TshirtRepository tshirtRepository, ProcessingFeeRepository processingFeeRepository, SalesTaxRepository salesTaxRepository,
+                        InvoiceRepository invoiceRepository) {
         this.consoleRepository = consoleRepository;
         this.gameRepository = gameRepository;
         this.tshirtRepository = tshirtRepository;
         this.processingFeeRepository = processingFeeRepository;
         this.salesTaxRepository = salesTaxRepository;
+        this.invoiceRepository = invoiceRepository;
     }
 
     @Transactional
-    public InvoiceViewModel saveInvoice(InvoiceViewModel viewModel) {
-
-
-        return null;
-    }
-
-    public InvoiceViewModel findInvoice(int id) {
-
-        return null;
-    }
-
-    private Invoice buildInvoiceViewModel(Invoice invoice) {
+    public InvoiceViewModel saveInvoice(InvoiceViewModel invoiceViewModel) {
 
         BigDecimal totalPrice = new BigDecimal(0);
         int inventory;
         BigDecimal price;
 
         //Get the state and qty purchased from invoice
-        String state = invoice.getState();
-        int quantity = invoice.getQuantity();
+        String state = invoiceViewModel.getState();
+        int quantity = invoiceViewModel.getQuantity();
 
+        //String itemType = invoiceViewModel.getItem_type().toLowerCase();
         // Get the type of product
-        if (invoice.getItem_type() == "game"){
+        if (invoiceViewModel.getItem_type() == "Game"){
              // Get the associated game
-            Optional<Game> item = gameRepository.findById(invoice.getItem_id());
+            Optional<Game> item = gameRepository.findById(invoiceViewModel.getItem_id());
             inventory = item.get().getQuantity();
             price = item.get().getPrice();
             if (quantity > inventory){
@@ -67,18 +61,18 @@ public class ServiceLayer {
             }
         }
 
-        else if (invoice.getItem_type() == "console"){
+        else if (invoiceViewModel.getItem_type() == "console"){
             // Get the associated tshirt
-            Optional<Console> item = consoleRepository.findById(invoice.getItem_id());
+            Optional<Console> item = consoleRepository.findById(invoiceViewModel.getItem_id());
             inventory = item.get().getQuantity();
             price = item.get().getPrice();
             if (quantity > inventory){
                 throw new IllegalArgumentException("Not enough console in stock.");
             }}
 
-        else if (invoice.getItem_type() == "tshirt") {
+        else if (invoiceViewModel.getItem_type() == "tshirt") {
             // Get the associated console
-            Optional<Tshirt> item = tshirtRepository.findById(invoice.getItem_id());
+            Optional<Tshirt> item = tshirtRepository.findById(invoiceViewModel.getItem_id());
             inventory = item.get().getQuantity();
             price = item.get().getPrice();
             if (quantity > inventory){
@@ -98,7 +92,7 @@ public class ServiceLayer {
         BigDecimal stateTaxTotal =  stateTax.multiply(subtotal);
 
         //Calculate processing fee
-        BigDecimal processingFeeForItem = processingFeeRepository.findFeeByProductType(invoice.getItem_type());
+        BigDecimal processingFeeForItem = processingFeeRepository.findFeeByProductType(invoiceViewModel.getItem_type());
         BigDecimal extraFee = new BigDecimal(15.49);
         BigDecimal processingFeeTotal = (quantity > 10 ? (processingFeeForItem.add(extraFee)) : processingFeeForItem);
 
@@ -107,42 +101,35 @@ public class ServiceLayer {
         totalPrice = totalPrice.add(stateTaxTotal);
         totalPrice = totalPrice.add(processingFeeTotal);
 
-        // Assemble the Invoice, missing id
+        // Assemble the Invoice
         Invoice newInvoice = new Invoice();
-        newInvoice.setCity(invoice.getCity());
-        newInvoice.setQuantity(invoice.getQuantity());
-        newInvoice.setItem_id(invoice.getItem_id());
-        newInvoice.setName(invoice.getName());
-        newInvoice.setState(invoice.getState());
-        newInvoice.setZipcode(invoice.getZipcode());
-        newInvoice.setStreet(invoice.getStreet());
+        newInvoice.setCity(invoiceViewModel.getCity());
+        newInvoice.setQuantity(invoiceViewModel.getQuantity());
+        newInvoice.setItem_id(invoiceViewModel.getItem_id());
+        newInvoice.setName(invoiceViewModel.getName());
+        newInvoice.setState(invoiceViewModel.getState());
+        newInvoice.setZipcode(invoiceViewModel.getZipcode());
+        newInvoice.setStreet(invoiceViewModel.getStreet());
         newInvoice.setProcessing_fee(processingFeeTotal);
-        newInvoice.setItem_type(invoice.getItem_type());
+        newInvoice.setItem_type(invoiceViewModel.getItem_type());
         newInvoice.setUnit_price(price);
         newInvoice.setSubtotal(subtotal);
         newInvoice.setTax(stateTaxTotal);
-        newInvoice.setProcessing_fee(processingFeeTotal);
         newInvoice.setTotal(totalPrice);
 
         // Return the AlbumViewModel
+        newInvoice = invoiceRepository.save(newInvoice);
 
-        return newInvoice;
+        //Complete invoiceViewModel
+        invoiceViewModel.setId(newInvoice.getId());
+        invoiceViewModel.setProcessing_fee(newInvoice.getProcessing_fee());
+        invoiceViewModel.setUnit_price(newInvoice.getUnit_price());
+        invoiceViewModel.setSubtotal(newInvoice.getSubtotal());
+        invoiceViewModel.setTax(newInvoice.getTax());
+        invoiceViewModel.setTotal(newInvoice.getTotal());
+
+        return invoiceViewModel;
     }
 
-    public List<InvoiceViewModel> findAllInvoices() {
-
-        return null;
-
-    }
-
-    @Transactional
-    public void updateInvoice(InvoiceViewModel viewModel) {
-
-    }
-
-    @Transactional
-    public void removeInvoice(int id) {
-
-    }
 
 }

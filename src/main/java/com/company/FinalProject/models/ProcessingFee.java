@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.Id;
 import javax.persistence.Table;
 import java.io.Serializable;
 import java.math.BigDecimal;
@@ -14,6 +15,7 @@ import java.util.Objects;
 @Table(name = "processing_fee")
 public class ProcessingFee implements Serializable{
 
+    @Id
     @Column(name = "product_type")
     private String productType;
     private BigDecimal fee;

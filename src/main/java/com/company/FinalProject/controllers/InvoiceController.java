@@ -2,6 +2,7 @@ package com.company.FinalProject.controllers;
 
 import com.company.FinalProject.models.Invoice;
 import com.company.FinalProject.repositories.InvoiceRepository;
+import com.company.FinalProject.service.ServiceLayer;
 import com.company.FinalProject.viewModel.InvoiceViewModel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -13,14 +14,16 @@ import java.util.Optional;
 @RestController
 public class InvoiceController {
 
+    @Autowired
+    ServiceLayer serviceLayer;
+
     //TO DO
     @PostMapping("/invoice")
     @ResponseStatus(HttpStatus.CREATED)
-    public Invoice generateInvoice(@RequestBody InvoiceViewModel invoice) {
+    public InvoiceViewModel addInvoice(@RequestBody InvoiceViewModel invoice) {
+        return serviceLayer.saveInvoice(invoice);
 
-        return null;
     }
-
 
 }
 
