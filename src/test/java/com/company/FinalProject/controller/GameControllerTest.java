@@ -1,6 +1,7 @@
 package com.company.FinalProject.controller;
 
 import com.company.FinalProject.models.Game;
+import com.company.FinalProject.repositories.GameRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.Before;
 import org.junit.jupiter.api.Test;
@@ -9,6 +10,7 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.web.servlet.MockMvc;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class GameControllerTest
 {

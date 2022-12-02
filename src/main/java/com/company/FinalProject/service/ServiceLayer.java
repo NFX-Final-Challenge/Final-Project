@@ -46,9 +46,11 @@ public class ServiceLayer {
         return null;
     }
 
-    private InvoiceViewModel buildInvoiceViewModel(Invoice invoice) {
+    private InvoiceViewModel buildInvoice(Invoice invoice) {
 
-        BigDecimal totalPrice;
+        BigDecimal totalPrice = new BigDecimal(0);
+        int inventory;
+        BigDecimal price;
 
         //Get the state and qty purchased from invoice
         String state = invoice.getState();
@@ -58,35 +60,57 @@ public class ServiceLayer {
         if (invoice.getItem_type() == "game"){
              // Get the associated game
             Optional<Game> item = gameRepository.findById(invoice.getItem_id());
-            int inventory = item.get().getQuantity();
-            BigDecimal price = item.get().getPrice();
+            inventory = item.get().getQuantity();
+            price = item.get().getPrice();
+            if (quantity > inventory){
+                //throw new illlegalArg
+                return null;
+            }
         }
 
         else if (invoice.getItem_type() == "console"){
             // Get the associated tshirt
             Optional<Console> item = consoleRepository.findById(invoice.getItem_id());
-            int inventory = item.get().getQuantity();
-            BigDecimal price = item.get().getPrice();}
+            inventory = item.get().getQuantity();
+            price = item.get().getPrice();
+            if (quantity > inventory){
+                //throw error?
+                return null;
+            }}
 
         else if (invoice.getItem_type() == "tshirt") {
             // Get the associated console
             Optional<Tshirt> item = tshirtRepository.findById(invoice.getItem_id());
-            int inventory = item.get().getQuantity();
-            BigDecimal price = item.get().getPrice();}
+            inventory = item.get().getQuantity();
+            price = item.get().getPrice();
+            if (quantity > inventory){
+                //throw error?
+                return null;
+            }}
 
         else {
             //throw error?
+            return null;
         }
+
+        //Quantity ordered * price
+        BigDecimal quantityTimesPriceOfSingleItem = price.multiply(BigDecimal.valueOf(quantity));
 
         //Look up stateTax
         BigDecimal stateTax = salesTaxRepository.findRateByState(state);
+        //Calculate sales tax/stateTax
+        BigDecimal stateTaxTotal =  stateTax.multiply(quantityTimesPriceOfSingleItem);
+
+        //Calculate processing fee
+        BigDecimal processingFeeTotal = BigDecimal.valueOf((quantity > 10 ? (15.49+1.49) : 1.49));
 
 
+        totalPrice = totalPrice.add(quantityTimesPriceOfSingleItem);
+        totalPrice = totalPrice.add(stateTaxTotal);
+        totalPrice = totalPrice.add(processingFeeTotal);
 
-        // Assemble the InvoiceViewModel
-        InvoiceViewModel ivm = new InvoiceViewModel();
-
-
+        // Assemble the Invoice
+       
 
         // Return the AlbumViewModel
         return ivm;
