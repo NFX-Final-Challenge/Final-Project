@@ -46,61 +46,95 @@ public class ServiceLayer {
 
         //String itemType = invoiceViewModel.getItem_type().toLowerCase();
         // Get the type of product
-        if (itemType == "Game"){
+        if (invoiceViewModel.getItemType().equals("Game")){
              // Get the associated game
             Optional<Game> item = gameRepository.findById(invoiceViewModel.getItemId());
-            inventory = item.get().getQuantity();
-            price = item.get().getPrice();
-            if (quantity > inventory) {
-                throw new IllegalArgumentException("Not enough games in stock.");
-            }
 
             if (item.isPresent()) {
+                inventory = item.get().getQuantity();
+                price = item.get().getPrice();
 
+                if (quantity > inventory) {
+                    throw new IllegalArgumentException("Not enough games in stock.");
+                }
+
+                Game game = new Game();
                 int newInventory = inventory - quantity;
-                item.get().setId(invoiceViewModel.getItemId());
-                item.get().setQuantity(newInventory);
-                //gameRepository.save(item);
+                game.setId(item.get().getId());
+                game.setTitle(item.get().getTitle());
+                game.setDescription(item.get().getDescription());
+                game.setPrice(item.get().getPrice());
+                game.setStudio(item.get().getStudio());
+                game.setEsrb_rating(item.get().getEsrb_rating());
+                game.setQuantity(newInventory);
+                game = gameRepository.save(game);
+
+            }
+
+            else {
+                throw new IllegalArgumentException("Could not find a game with this ID.");
             }
         }
 
-        else if (invoiceViewModel.getItemType() == "Console"){
+        else if (invoiceViewModel.getItemType().equals("Console")){
             // Get the associated console
             Optional<Console> item = consoleRepository.findById(invoiceViewModel.getItemId());
-            inventory = item.get().getQuantity();
-            price = item.get().getPrice();
-            if (quantity > inventory){
-                throw new IllegalArgumentException("Not enough console in stock.");
-            }
 
             if (item.isPresent()) {
-                Console updatedItem = new Console();
+                inventory = item.get().getQuantity();
+                price = item.get().getPrice();
+
+                if (quantity > inventory){
+                    throw new IllegalArgumentException("Not enough consoles in stock.");
+                }
+
+                Console console = new Console();
                 int newInventory = inventory - quantity;
-                updatedItem.setId(invoiceViewModel.getItemId());
-                updatedItem.setQuantity(newInventory);
-                updatedItem = consoleRepository.save(updatedItem);
+                console.setId(item.get().getId());
+                console.setModel(item.get().getModel());
+                console.setManufacturer(item.get().getManufacturer());
+                console.setMemoryAmount(item.get().getMemoryAmount());
+                console.setProcessor(item.get().getProcessor());
+                console.setPrice(item.get().getPrice());
+                console.setQuantity(newInventory);
+                console = consoleRepository.save(console);
+            }
+
+            else {
+                throw new IllegalArgumentException("Could not find a console with this ID.");
             }
         }
 
-        else if (invoiceViewModel.getItemType() == "T-Shirt") {
+        else if (invoiceViewModel.getItemType().equals("Tshirt")) {
             // Get the associated tshirt
             Optional<Tshirt> item = tshirtRepository.findById(invoiceViewModel.getItemId());
-            inventory = item.get().getQuantity();
-            price = item.get().getPrice();
-            if (quantity > inventory){
-                throw new IllegalArgumentException("Not enough tshirts in stock.");
-            }
+
             if (item.isPresent()) {
-                Tshirt updatedItem = new Tshirt();
+                inventory = item.get().getQuantity();
+                price = item.get().getPrice();
+
+                if (quantity > inventory){
+                    throw new IllegalArgumentException("Not enough tshirts in stock.");
+                }
+
+                Tshirt tshirt = new Tshirt();
                 int newInventory = inventory - quantity;
-                updatedItem.setT_shirt_id(invoiceViewModel.getItemId());
-                updatedItem.setQuantity(newInventory);
-                updatedItem = tshirtRepository.save(updatedItem);
+                tshirt.setT_shirt_id(item.get().getT_shirt_id());
+                tshirt.setDescription(item.get().getDescription());
+                tshirt.setPrice(item.get().getPrice());
+                tshirt.setColor(item.get().getColor());
+                tshirt.setSize(item.get().getSize());
+                tshirt.setQuantity(newInventory);
+                tshirt = tshirtRepository.save(tshirt);
+            }
+
+            else {
+                throw new IllegalArgumentException("Could not find a T-shirt with this ID.");
             }
         }
 
         else {
-            throw new IllegalArgumentException("Item type not recognized.");
+            throw new IllegalArgumentException("Item not recognized:" + invoiceViewModel.getItemType()  );
         }
 
         //Quantity ordered * price
@@ -109,16 +143,16 @@ public class ServiceLayer {
         //Look up stateTax
         SalesTax stateTaxObj = salesTaxRepository.findRateByState(state);
         BigDecimal stateTax = stateTaxObj.getRate();
-        //Calculate sales tax/stateTax
+        //Compute sales tax/stateTax
         BigDecimal stateTaxTotal =  stateTax.multiply(subtotal);
 
-        //Calculate processing fee
+        //Compute processing fee
         ProcessingFee processingFeeForItemObj = processingFeeRepository.findFeeByProductType(itemType);
         BigDecimal processingFeeForItem = processingFeeForItemObj.getFee();
         BigDecimal extraFee = BigDecimal.valueOf(15.49);
         BigDecimal processingFeeTotal = (quantity > 10 ? (processingFeeForItem.add(extraFee)) : processingFeeForItem);
 
-
+        //Compute total price
         totalPrice = totalPrice.add(subtotal);
         totalPrice = totalPrice.add(stateTaxTotal);
         totalPrice = totalPrice.add(processingFeeTotal);
