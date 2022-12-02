@@ -1,9 +1,6 @@
 package com.company.FinalProject.service;
 
-import com.company.FinalProject.models.Invoice;
-import com.company.FinalProject.models.Tshirt;
-import com.company.FinalProject.models.Console;
-import com.company.FinalProject.models.Game;
+import com.company.FinalProject.models.*;
 import com.company.FinalProject.repositories.*;
 import com.company.FinalProject.viewModel.InvoiceViewModel;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,9 +8,6 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Locale;
 import java.util.Optional;
 
 @Component
@@ -48,36 +42,62 @@ public class ServiceLayer {
         //Get the state and qty purchased from invoice
         String state = invoiceViewModel.getState();
         int quantity = invoiceViewModel.getQuantity();
+        String itemType = "Game";
 
         //String itemType = invoiceViewModel.getItem_type().toLowerCase();
         // Get the type of product
-        if (invoiceViewModel.getItem_type() == "Game"){
+        if (itemType == "Game"){
              // Get the associated game
-            Optional<Game> item = gameRepository.findById(invoiceViewModel.getItem_id());
+            Optional<Game> item = gameRepository.findById(invoiceViewModel.getItemId());
             inventory = item.get().getQuantity();
             price = item.get().getPrice();
-            if (quantity > inventory){
+            if (quantity > inventory) {
                 throw new IllegalArgumentException("Not enough games in stock.");
+            }
+
+            if (item.isPresent()) {
+
+                int newInventory = inventory - quantity;
+                item.get().setId(invoiceViewModel.getItemId());
+                item.get().setQuantity(newInventory);
+                //gameRepository.save(item);
             }
         }
 
-        else if (invoiceViewModel.getItem_type() == "console"){
-            // Get the associated tshirt
-            Optional<Console> item = consoleRepository.findById(invoiceViewModel.getItem_id());
+        else if (invoiceViewModel.getItemType() == "Console"){
+            // Get the associated console
+            Optional<Console> item = consoleRepository.findById(invoiceViewModel.getItemId());
             inventory = item.get().getQuantity();
             price = item.get().getPrice();
             if (quantity > inventory){
                 throw new IllegalArgumentException("Not enough console in stock.");
-            }}
+            }
 
-        else if (invoiceViewModel.getItem_type() == "tshirt") {
-            // Get the associated console
-            Optional<Tshirt> item = tshirtRepository.findById(invoiceViewModel.getItem_id());
+            if (item.isPresent()) {
+                Console updatedItem = new Console();
+                int newInventory = inventory - quantity;
+                updatedItem.setId(invoiceViewModel.getItemId());
+                updatedItem.setQuantity(newInventory);
+                updatedItem = consoleRepository.save(updatedItem);
+            }
+        }
+
+        else if (invoiceViewModel.getItemType() == "T-Shirt") {
+            // Get the associated tshirt
+            Optional<Tshirt> item = tshirtRepository.findById(invoiceViewModel.getItemId());
             inventory = item.get().getQuantity();
             price = item.get().getPrice();
             if (quantity > inventory){
                 throw new IllegalArgumentException("Not enough tshirts in stock.");
-            }}
+            }
+            if (item.isPresent()) {
+                Tshirt updatedItem = new Tshirt();
+                int newInventory = inventory - quantity;
+                updatedItem.setT_shirt_id(invoiceViewModel.getItemId());
+                updatedItem.setQuantity(newInventory);
+                updatedItem = tshirtRepository.save(updatedItem);
+            }
+        }
 
         else {
             throw new IllegalArgumentException("Item type not recognized.");
@@ -87,13 +107,15 @@ public class ServiceLayer {
         BigDecimal subtotal = price.multiply(BigDecimal.valueOf(quantity));
 
         //Look up stateTax
-        BigDecimal stateTax = salesTaxRepository.findRateByState(state);
+        SalesTax stateTaxObj = salesTaxRepository.findRateByState(state);
+        BigDecimal stateTax = stateTaxObj.getRate();
         //Calculate sales tax/stateTax
         BigDecimal stateTaxTotal =  stateTax.multiply(subtotal);
 
         //Calculate processing fee
-        BigDecimal processingFeeForItem = processingFeeRepository.findFeeByProductType(invoiceViewModel.getItem_type());
-        BigDecimal extraFee = new BigDecimal(15.49);
+        ProcessingFee processingFeeForItemObj = processingFeeRepository.findFeeByProductType(itemType);
+        BigDecimal processingFeeForItem = processingFeeForItemObj.getFee();
+        BigDecimal extraFee = BigDecimal.valueOf(15.49);
         BigDecimal processingFeeTotal = (quantity > 10 ? (processingFeeForItem.add(extraFee)) : processingFeeForItem);
 
 
@@ -105,19 +127,19 @@ public class ServiceLayer {
         Invoice newInvoice = new Invoice();
         newInvoice.setCity(invoiceViewModel.getCity());
         newInvoice.setQuantity(invoiceViewModel.getQuantity());
-        newInvoice.setItem_id(invoiceViewModel.getItem_id());
+        newInvoice.setItemId(invoiceViewModel.getItemId());
         newInvoice.setName(invoiceViewModel.getName());
         newInvoice.setState(invoiceViewModel.getState());
         newInvoice.setZipcode(invoiceViewModel.getZipcode());
         newInvoice.setStreet(invoiceViewModel.getStreet());
         newInvoice.setProcessing_fee(processingFeeTotal);
-        newInvoice.setItem_type(invoiceViewModel.getItem_type());
+        newInvoice.setItemType(invoiceViewModel.getItemType());
         newInvoice.setUnit_price(price);
         newInvoice.setSubtotal(subtotal);
         newInvoice.setTax(stateTaxTotal);
         newInvoice.setTotal(totalPrice);
 
-        // Return the AlbumViewModel
+        // Return the InvoiceViewModel
         newInvoice = invoiceRepository.save(newInvoice);
 
         //Complete invoiceViewModel

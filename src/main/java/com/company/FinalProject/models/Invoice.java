@@ -36,32 +36,29 @@ public class Invoice implements Serializable {
 
     @NotEmpty(message = "Must enter a zipcode.")
     @Min(value = 5, message = "Must be 5 digits.")
-    @Max(value = 5, message = "Must be 5 digits.")
     private String zipcode;
 
     @NotEmpty(message = "Must specify item type.")
-    private String item_type;
+    @Column(name = "item_type")
+    private String itemType;
 
-    @NotEmpty(message = "Must specify item id.")
-    private int item_id;
+    @Column(name = "item_id")
+    private int itemId;
 
-    @NotEmpty(message = "Must have a unit price.")
     private BigDecimal unit_price;
 
-    @NotEmpty(message = "Must specify a quantity." )
     @Min(value = 1, message = "Quantity must be greater than 0.")
     private int quantity;
 
-    @NotEmpty(message = "Must have a subtotal.")
+
     private BigDecimal subtotal;
 
-    @NotEmpty(message = "Must have sales tax.")
+
     private BigDecimal tax;
 
-    @NotEmpty(message = "Must have processing fee.")
     private BigDecimal processing_fee;
 
-    @NotEmpty(message = "Must have a total.")
+
     private BigDecimal total;
 
     public int getId() {
@@ -112,20 +109,20 @@ public class Invoice implements Serializable {
         this.zipcode = zipcode;
     }
 
-    public String getItem_type() {
-        return item_type;
+    public String getItemType() {
+        return itemType;
     }
 
-    public void setItem_type(String item_type) {
-        this.item_type = item_type;
+    public void setItemType(String itemType) {
+        this.itemType = itemType;
     }
 
-    public int getItem_id() {
-        return item_id;
+    public int getItemId() {
+        return itemId;
     }
 
-    public void setItem_id(int item_id) {
-        this.item_id = item_id;
+    public void setItemId(int itemId) {
+        this.itemId = itemId;
     }
 
     public BigDecimal getUnit_price() {
@@ -181,12 +178,12 @@ public class Invoice implements Serializable {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Invoice invoice = (Invoice) o;
-        return id == invoice.id && item_id == invoice.item_id && quantity == invoice.quantity && Objects.equals(name, invoice.name) && Objects.equals(street, invoice.street) && Objects.equals(city, invoice.city) && Objects.equals(state, invoice.state) && Objects.equals(zipcode, invoice.zipcode) && Objects.equals(item_type, invoice.item_type) && Objects.equals(unit_price, invoice.unit_price) && Objects.equals(subtotal, invoice.subtotal) && Objects.equals(tax, invoice.tax) && Objects.equals(processing_fee, invoice.processing_fee) && Objects.equals(total, invoice.total);
+        return id == invoice.id && itemId == invoice.itemId && quantity == invoice.quantity && Objects.equals(name, invoice.name) && Objects.equals(street, invoice.street) && Objects.equals(city, invoice.city) && Objects.equals(state, invoice.state) && Objects.equals(zipcode, invoice.zipcode) && Objects.equals(itemType, invoice.itemType) && Objects.equals(unit_price, invoice.unit_price) && Objects.equals(subtotal, invoice.subtotal) && Objects.equals(tax, invoice.tax) && Objects.equals(processing_fee, invoice.processing_fee) && Objects.equals(total, invoice.total);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, name, street, city, state, zipcode, item_type, item_id, unit_price, quantity, subtotal, tax, processing_fee, total);
+        return Objects.hash(id, name, street, city, state, zipcode, itemType, itemId, unit_price, quantity, subtotal, tax, processing_fee, total);
     }
 
     @Override
@@ -198,8 +195,8 @@ public class Invoice implements Serializable {
                 ", city='" + city + '\'' +
                 ", state='" + state + '\'' +
                 ", zipcode='" + zipcode + '\'' +
-                ", item_type='" + item_type + '\'' +
-                ", item_id=" + item_id +
+                ", item_type='" + itemType + '\'' +
+                ", item_id=" + itemId +
                 ", unit_price=" + unit_price +
                 ", quantity=" + quantity +
                 ", subtotal=" + subtotal +

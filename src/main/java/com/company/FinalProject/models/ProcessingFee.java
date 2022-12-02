@@ -18,6 +18,7 @@ public class ProcessingFee implements Serializable{
     @Id
     @Column(name = "product_type")
     private String productType;
+
     private BigDecimal fee;
 
     public String getProductType() {

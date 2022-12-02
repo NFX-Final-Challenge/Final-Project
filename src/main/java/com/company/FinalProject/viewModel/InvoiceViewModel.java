@@ -2,7 +2,7 @@ package com.company.FinalProject.viewModel;
 
 import org.hibernate.validator.constraints.Length;
 
-import javax.validation.Valid;
+import javax.persistence.Column;
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotEmpty;
@@ -11,7 +11,6 @@ import java.util.Objects;
 
 public class InvoiceViewModel {
 
-    @NotEmpty(message = "Must have id.")
     private int id;
 
     @NotEmpty(message = "Must enter a name.")
@@ -33,10 +32,13 @@ public class InvoiceViewModel {
     private String zipcode;
 
     @NotEmpty(message = "Must specify item type.")
-    private String item_type;
+    @Column(name = "item_type")
+    private String itemType;
 
     @NotEmpty(message = "Must specify item id.")
-    private int item_id;
+    @Column(name = "item_id")
+    private int itemId;
+
     private BigDecimal unit_price;
 
     @NotEmpty(message = "Must specific item quantity.")
@@ -96,20 +98,20 @@ public class InvoiceViewModel {
         this.zipcode = zipcode;
     }
 
-    public String getItem_type() {
-        return item_type;
+    public String getItemType() {
+        return itemType;
     }
 
-    public void setItem_type(String item_type) {
-        this.item_type = item_type;
+    public void setItemType(String itemType) {
+        this.itemType = itemType;
     }
 
-    public int getItem_id() {
-        return item_id;
+    public int getItemId() {
+        return itemId;
     }
 
-    public void setItem_id(int item_id) {
-        this.item_id = item_id;
+    public void setItemId(int itemId) {
+        this.itemId = itemId;
     }
 
     public BigDecimal getUnit_price() {
@@ -165,12 +167,12 @@ public class InvoiceViewModel {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         InvoiceViewModel that = (InvoiceViewModel) o;
-        return id == that.id && item_id == that.item_id && quantity == that.quantity && Objects.equals(name, that.name) && Objects.equals(street, that.street) && Objects.equals(city, that.city) && Objects.equals(state, that.state) && Objects.equals(zipcode, that.zipcode) && Objects.equals(item_type, that.item_type) && Objects.equals(unit_price, that.unit_price) && Objects.equals(subtotal, that.subtotal) && Objects.equals(tax, that.tax) && Objects.equals(processing_fee, that.processing_fee) && Objects.equals(total, that.total);
+        return id == that.id && itemId == that.itemId && quantity == that.quantity && Objects.equals(name, that.name) && Objects.equals(street, that.street) && Objects.equals(city, that.city) && Objects.equals(state, that.state) && Objects.equals(zipcode, that.zipcode) && Objects.equals(itemType, that.itemType) && Objects.equals(unit_price, that.unit_price) && Objects.equals(subtotal, that.subtotal) && Objects.equals(tax, that.tax) && Objects.equals(processing_fee, that.processing_fee) && Objects.equals(total, that.total);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, name, street, city, state, zipcode, item_type, item_id, unit_price, quantity, subtotal, tax, processing_fee, total);
+        return Objects.hash(id, name, street, city, state, zipcode, itemType, itemId, unit_price, quantity, subtotal, tax, processing_fee, total);
     }
 
     @Override
@@ -182,8 +184,8 @@ public class InvoiceViewModel {
                 ", city='" + city + '\'' +
                 ", state='" + state + '\'' +
                 ", zipcode='" + zipcode + '\'' +
-                ", item_type='" + item_type + '\'' +
-                ", item_id=" + item_id +
+                ", item_type='" + itemType + '\'' +
+                ", item_id=" + itemId +
                 ", unit_price=" + unit_price +
                 ", quantity=" + quantity +
                 ", subtotal=" + subtotal +
