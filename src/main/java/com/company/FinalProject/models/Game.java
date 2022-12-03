@@ -7,6 +7,7 @@ import javax.validation.constraints.Min;
 import javax.validation.constraints.NotEmpty;
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.math.MathContext;
 import java.util.Objects;
 
 @Entity
@@ -69,7 +70,8 @@ public class Game implements Serializable {
     }
 
     public void setPrice(BigDecimal price) {
-        this.price = price;
+        MathContext m = new MathContext(4);
+        this.price = price.round(m);
     }
 
     public String getStudio() {

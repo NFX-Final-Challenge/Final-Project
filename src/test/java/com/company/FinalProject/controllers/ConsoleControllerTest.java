@@ -1,13 +1,12 @@
-package com.company.FinalProject.controller;
+package com.company.FinalProject.controllers;
 
-import com.company.FinalProject.controllers.ConsoleController;
 import com.company.FinalProject.models.Console;
 import com.company.FinalProject.repositories.ConsoleRepository;
 
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.Before;
-import org.junit.jupiter.api.Test;
+import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;

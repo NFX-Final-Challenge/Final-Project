@@ -9,6 +9,7 @@ import javax.validation.constraints.Max;
 import javax.validation.constraints.NotEmpty;
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.math.MathContext;
 import java.util.Objects;
 
 @Entity
@@ -17,7 +18,6 @@ import java.util.Objects;
 public class Tshirt implements Serializable
 {
     // Variables
-    @NotEmpty
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int t_shirt_id;
@@ -34,11 +34,9 @@ public class Tshirt implements Serializable
     @Length(max = 255, message = "Description too long.")
     private String description;
 
-    @NotEmpty(message = "T-shirt must have a price.")
     @Max(value = 999, message = "Number too large.")
     private BigDecimal price;
 
-    @NotEmpty(message = "Must provide how many t-shirts.")
     private int quantity;
 
 
@@ -81,7 +79,8 @@ public class Tshirt implements Serializable
     }
 
     public void setPrice(BigDecimal price) {
-        this.price = price;
+        MathContext m = new MathContext(4);
+        this.price = price.round(m);
     }
 
     public int getQuantity() {

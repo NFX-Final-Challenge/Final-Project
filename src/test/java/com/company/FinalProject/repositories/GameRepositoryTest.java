@@ -1,7 +1,6 @@
-package com.company.FinalProject.repository;
+package com.company.FinalProject.repositories;
 
 import com.company.FinalProject.models.Game;
-import com.company.FinalProject.repositories.GameRepository;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -30,7 +29,7 @@ public class GameRepositoryTest
     }
 
     @Test
-    public void shouldAddGetDeleteAuthor()
+    public void shouldAddGetDeleteGame()
     {
         Game game = new Game();
         game.setTitle("Little Big Planet");

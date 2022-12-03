@@ -1,12 +1,13 @@
-package com.company.FinalProject.repository;
+package com.company.FinalProject.repositories;
 
 import com.company.FinalProject.models.Tshirt;
-import com.company.FinalProject.repositories.TshirtRepository;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
-import java.io.Console;
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.Optional;
@@ -14,6 +15,9 @@ import java.util.Optional;
 import static org.junit.Assert.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+
+@RunWith(SpringJUnit4ClassRunner.class)
+@SpringBootTest
 public class TshirtRepositoryTest
 {
     @Autowired

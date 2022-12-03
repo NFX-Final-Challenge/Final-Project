@@ -1,8 +1,6 @@
-package com.company.FinalProject.repository;
+package com.company.FinalProject.repositories;
 
 import com.company.FinalProject.models.Console;
-import com.company.FinalProject.repositories.ConsoleRepository;
-import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
