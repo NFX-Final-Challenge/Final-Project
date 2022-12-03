@@ -8,6 +8,8 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
+import java.math.MathContext;
+import java.math.RoundingMode;
 import java.util.Optional;
 
 @Component
@@ -42,9 +44,18 @@ public class ServiceLayer {
         //Get the state and qty purchased from invoice
         String state = invoiceViewModel.getState();
         int quantity = invoiceViewModel.getQuantity();
-        String itemType = "Game";
 
-        //String itemType = invoiceViewModel.getItem_type().toLowerCase();
+        //Quantity must be greater than 0
+        if (quantity <= 0) {
+            throw new IllegalArgumentException("Quantity ordered insufficient.");
+        }
+
+        //Zipcode must be valid
+        String zipcode = invoiceViewModel.getZipcode();
+        if (!validateZipCode(zipcode)){
+            throw new IllegalArgumentException("Zipcode for this order is invalid.");
+        }
+
         // Get the type of product
         if (invoiceViewModel.getItemType().equals("Game")){
              // Get the associated game
@@ -147,7 +158,7 @@ public class ServiceLayer {
         BigDecimal stateTaxTotal =  stateTax.multiply(subtotal);
 
         //Compute processing fee
-        ProcessingFee processingFeeForItemObj = processingFeeRepository.findFeeByProductType(itemType);
+        ProcessingFee processingFeeForItemObj = processingFeeRepository.findFeeByProductType(invoiceViewModel.getItemType());
         BigDecimal processingFeeForItem = processingFeeForItemObj.getFee();
         BigDecimal extraFee = BigDecimal.valueOf(15.49);
         BigDecimal processingFeeTotal = (quantity > 10 ? (processingFeeForItem.add(extraFee)) : processingFeeForItem);
@@ -156,6 +167,8 @@ public class ServiceLayer {
         totalPrice = totalPrice.add(subtotal);
         totalPrice = totalPrice.add(stateTaxTotal);
         totalPrice = totalPrice.add(processingFeeTotal);
+        totalPrice = totalPrice.setScale(2, RoundingMode.FLOOR);
+
 
         // Assemble the Invoice
         Invoice newInvoice = new Invoice();
@@ -187,5 +200,20 @@ public class ServiceLayer {
         return invoiceViewModel;
     }
 
+
+    private boolean validateZipCode(String zipcode){
+        if (zipcode != null) {
+            boolean isZipcodeValidLength = (zipcode.length() == 5);
+            boolean isZipcodeValidNum = (zipcode.matches("[0-9]+"));
+
+            boolean isZipcodeValid = ( isZipcodeValidLength && isZipcodeValidNum);
+            return isZipcodeValid;
+        }
+
+        else {
+            throw new IllegalArgumentException("Zipcode missing from invoice");
+        }
+
+    }
 
 }

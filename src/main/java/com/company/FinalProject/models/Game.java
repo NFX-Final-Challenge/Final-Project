@@ -8,6 +8,7 @@ import javax.validation.constraints.NotEmpty;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.math.MathContext;
+import java.math.RoundingMode;
 import java.util.Objects;
 
 @Entity
@@ -23,9 +24,11 @@ public class Game implements Serializable {
     @NotEmpty(message = "You must enter a title for this game.")
     private String title;
 
+    @NotEmpty(message = "You must enter a rating for this game.")
     @Column(name = "esrb_rating")
     private String esrbRating;
 
+    @NotEmpty(message = "You must enter a description for this game.")
     private String description;
     private BigDecimal price;
     private String studio;
@@ -70,8 +73,7 @@ public class Game implements Serializable {
     }
 
     public void setPrice(BigDecimal price) {
-        MathContext m = new MathContext(4);
-        this.price = price.round(m);
+        this.price = price.setScale(2, RoundingMode.CEILING);
     }
 
     public String getStudio() {

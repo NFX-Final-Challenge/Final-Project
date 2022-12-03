@@ -10,6 +10,7 @@ import javax.validation.constraints.NotEmpty;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.math.MathContext;
+import java.math.RoundingMode;
 import java.util.Objects;
 
 @Entity
@@ -79,8 +80,7 @@ public class Tshirt implements Serializable
     }
 
     public void setPrice(BigDecimal price) {
-        MathContext m = new MathContext(4);
-        this.price = price.round(m);
+        this.price = price.setScale(2, RoundingMode.CEILING);
     }
 
     public int getQuantity() {
