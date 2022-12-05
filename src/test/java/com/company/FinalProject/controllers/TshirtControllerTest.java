@@ -46,14 +46,18 @@ public class TshirtControllerTest
     @Before
     public void setup() throws Exception
     {
-        Tshirt tshirt= new Tshirt();
+
+        tshirt = new Tshirt();
+        tshirt.setT_shirt_id(1);
         tshirt.setSize("Large");
         tshirt.setColor("Black");
         tshirt.setDescription("Super Mario Graphic Tee");
         tshirt.setPrice(new BigDecimal(15.99));
         tshirt.setQuantity(15);
 
-        Tshirt tshirt2= new Tshirt();
+        tshirtJson = mapper.writeValueAsString(tshirt);
+
+        Tshirt tshirt2 = new Tshirt();
         tshirt2.setSize("Medium");
         tshirt2.setColor("Black");
         tshirt2.setDescription("Super Mario Graphic Tee");
@@ -62,17 +66,31 @@ public class TshirtControllerTest
        
         allTshirts.add(tshirt);
         allTshirts.add(tshirt2);
+
+        allTshirtsJson = mapper.writeValueAsString(allTshirts);
     }
 
     @Test
     public void shouldCreateNewTshirtOnPostRequest() throws Exception
     {
+        tshirt = new Tshirt();
+        tshirt.setT_shirt_id(1);
+        tshirt.setSize("Medium");
+        tshirt.setColor("Yellow");
+        tshirt.setDescription("Yellow crew neck");
+        tshirt.setPrice(new BigDecimal(23.25));
+        tshirt.setQuantity(4);
+
+
         Tshirt inputTshirt = new Tshirt();
+        inputTshirt.setT_shirt_id(1);
         inputTshirt.setSize("Small");
         inputTshirt.setColor("Blue");
         inputTshirt.setDescription("Super Mario Graphic Tee");
         inputTshirt.setPrice(new BigDecimal(15.99));
         inputTshirt.setQuantity(7);
+
+        tshirtJson = mapper.writeValueAsString(tshirt);
 
         String inputJson = mapper.writeValueAsString(inputTshirt);
 
