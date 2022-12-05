@@ -116,7 +116,7 @@ public class ServiceLayer {
             }
         }
 
-        else if (invoiceViewModel.getItemType().equals("Tshirt")) {
+        else if (invoiceViewModel.getItemType().equals("T-Shirt")) {
             // Get the associated tshirt
             Optional<Tshirt> item = tshirtRepository.findById(invoiceViewModel.getItemId());
 

@@ -36,7 +36,7 @@ public class TshirtRepositoryTest
         tshirt.setSize("Large");
         tshirt.setColor("Black");
         tshirt.setDescription("Super Mario Graphic Tee");
-        tshirt.setPrice(new BigDecimal(15.99));
+        tshirt.setPrice(new BigDecimal(15.45));
         tshirt.setQuantity(15);
 
         tshirt = tshirtRepository.save(tshirt);
