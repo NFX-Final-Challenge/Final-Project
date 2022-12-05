@@ -24,6 +24,7 @@ import java.util.Optional;
 import static org.mockito.Mockito.doReturn;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @RunWith(SpringRunner.class)
@@ -107,6 +108,7 @@ public class TshirtControllerTest
     @Test
     public void shouldReturnTshirtById() throws Exception
     {
+
         doReturn(Optional.of(tshirt)).when(repo).findById(1);
 
         ResultActions result = mockMvc.perform(
@@ -119,24 +121,54 @@ public class TshirtControllerTest
     @Test
     public void shouldReturnTshirtByColor() throws Exception
     {
-        doReturn(Optional.of(tshirt)).when(repo).findTshirtByColor("Black");
+        Tshirt myTshirt = new Tshirt();
+        myTshirt.setSize("Small");
+        myTshirt.setColor("Black");
+        myTshirt.setDescription("V neck");
+        myTshirt.setPrice(new BigDecimal(17.99));
+        myTshirt.setQuantity(12);
+
+        List<Tshirt> blackShirts = new ArrayList<>();
+        blackShirts.add(myTshirt);
+
+        doReturn(myTshirt).when(repo).save(myTshirt);
+
+        String inputJson = mapper.writeValueAsString(myTshirt);
+        allTshirtsJson = mapper.writeValueAsString(blackShirts);
+
+        doReturn(blackShirts).when(repo).findTshirtByColor("black");
 
         ResultActions result = mockMvc.perform(
                         get("/tshirts/color/black"))
                 .andExpect(status().isOk())
-                .andExpect((MockMvcResultMatchers.content().json(tshirtJson))
+                .andExpect((MockMvcResultMatchers.content().json(allTshirtsJson))
                 );
     }
 
     @Test
     public void shouldReturnTshirtBySize() throws Exception
     {
-        doReturn(Optional.of(tshirt)).when(repo).findTshirtBySize("Medium");
+        Tshirt myTshirt = new Tshirt();
+        myTshirt.setSize("Medium");
+        myTshirt.setColor("Black");
+        myTshirt.setDescription("V neck");
+        myTshirt.setPrice(new BigDecimal(17.99));
+        myTshirt.setQuantity(12);
+
+        List<Tshirt> mediumShirts = new ArrayList<>();
+        mediumShirts.add(myTshirt);
+
+        doReturn(myTshirt).when(repo).save(myTshirt);
+
+        String inputJson = mapper.writeValueAsString(myTshirt);
+        allTshirtsJson = mapper.writeValueAsString(mediumShirts);
+
+        doReturn(mediumShirts).when(repo).findTshirtBySize("medium");
 
         ResultActions result = mockMvc.perform(
                         get("/tshirts/size/medium"))
                 .andExpect(status().isOk())
-                .andExpect((MockMvcResultMatchers.content().json(tshirtJson))
+                .andExpect((MockMvcResultMatchers.content().json(allTshirtsJson))
                 );
     }
 
@@ -147,7 +179,7 @@ public class TshirtControllerTest
 
         mockMvc.perform(
                         get("/tshirts/1234"))
-                .andExpect(status().isOk()
+                .andExpect(status().is4xxClientError()
                 );
 
     }
@@ -171,11 +203,22 @@ public class TshirtControllerTest
                                 .content(tshirtJson)
                                 .contentType(MediaType.APPLICATION_JSON)
                 )
-                .andExpect(status().isOk());
+                .andExpect(status().isNoContent());
     }
 
     @Test
-    public void shouldDeleteByIdAndReturn200StatusCode() throws Exception {
-        mockMvc.perform(delete("/tshirts/2")).andExpect(status().isOk());
+    public void shouldDeleteByIdAndReturn200StatusCode() throws Exception
+    {
+        Tshirt myTshirt = new Tshirt();
+        myTshirt.setT_shirt_id(2);
+        myTshirt.setSize("Small");
+        myTshirt.setColor("Black");
+        myTshirt.setDescription("V neck");
+        myTshirt.setPrice(new BigDecimal(17.99));
+        myTshirt.setQuantity(12);
+
+        doReturn(myTshirt).when(repo).save(myTshirt);
+
+        mockMvc.perform(delete("/tshirts/2")).andExpect(status().isNoContent());
     }
 }

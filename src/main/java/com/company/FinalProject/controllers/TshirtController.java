@@ -87,7 +87,7 @@ public class TshirtController
     }
 
     // Delete Tshirt
-    @DeleteMapping("/tshirts/{}")
+    @DeleteMapping("/tshirts/{ID}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void deleteTshirt(@Valid @PathVariable int ID)
     {
