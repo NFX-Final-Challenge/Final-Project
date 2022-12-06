@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 import java.util.Optional;
 
+@RestController
 public class ConsoleController {
     @Autowired
     ConsoleRepository consoleRepository;
@@ -53,6 +54,7 @@ public class ConsoleController {
     public void updateConsole(@RequestBody Console console) {
         consoleRepository.save(console);
     }
+    
     @DeleteMapping("/consoles/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void deleteConsole(@PathVariable int id) {
