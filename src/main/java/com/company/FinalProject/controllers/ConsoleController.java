@@ -54,7 +54,7 @@ public class ConsoleController {
     public void updateConsole(@RequestBody Console console) {
         consoleRepository.save(console);
     }
-    
+
     @DeleteMapping("/consoles/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void deleteConsole(@PathVariable int id) {
