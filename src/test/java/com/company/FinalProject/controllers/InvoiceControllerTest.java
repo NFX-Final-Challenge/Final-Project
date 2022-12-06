@@ -2,7 +2,6 @@ package com.company.FinalProject.controllers;
 
 import com.company.FinalProject.models.Game;
 import com.company.FinalProject.models.Invoice;
-import com.company.FinalProject.repositories.InvoiceRepository;
 import com.company.FinalProject.service.ServiceLayer;
 import com.company.FinalProject.viewModel.InvoiceViewModel;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -18,8 +17,6 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.List;
 
 import static org.mockito.Mockito.doReturn;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
