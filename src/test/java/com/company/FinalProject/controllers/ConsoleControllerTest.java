@@ -47,7 +47,8 @@ public class ConsoleControllerTest
     @Before
     public void setup() throws Exception
     {
-        Console console = new Console();
+        console = new Console();
+        console.setId(1);
         console.setModel("Playstation 5");
         console.setManufacturer("Sony");
         console.setMemoryAmount("825 GB");
@@ -55,12 +56,15 @@ public class ConsoleControllerTest
         console.setPrice(new BigDecimal("693.80"));
         console.setQuantity(2);
 
+        consoleJson = mapper.writeValueAsString(console);
+
+
         Console console2 = new Console();
-        console2.setModel("Playstation 5 Digital Edition");
-        console2.setManufacturer("Sony");
-        console2.setMemoryAmount("825 GB");
-        console2.setProcessor("AMD Zen 2 CPU");
-        console2.setPrice(new BigDecimal("569.99"));
+        console2.setModel("Switch");
+        console2.setManufacturer("Nintendo");
+        console2.setMemoryAmount("100 GB");
+        console2.setProcessor("AMD Zen 1 CPU");
+        console2.setPrice(new BigDecimal("299.99"));
         console2.setQuantity(7);
 
         allConsoles.add(console);
@@ -72,6 +76,16 @@ public class ConsoleControllerTest
     @Test
     public void shouldCreateNewConsoleOnPostRequest() throws Exception
     {
+
+        console =  new Console();
+        console.setId(1);
+        console.setModel("Playstation 5 Digital Edition");
+        console.setManufacturer("Sony");
+        console.setMemoryAmount("825 GB");
+        console.setProcessor("AMD ZEN 2 CPU");
+        console.setPrice(new BigDecimal("899.99"));
+        console.setQuantity(8);
+
         Console inputConsole = new Console();
         inputConsole.setModel("X Box Series X");
         inputConsole.setManufacturer("Microsoft");
@@ -79,6 +93,8 @@ public class ConsoleControllerTest
         inputConsole.setProcessor("AMD Zen 2 CPU");
         inputConsole.setPrice(new BigDecimal("499.00"));
         inputConsole.setQuantity(10);
+
+        consoleJson = mapper.writeValueAsString(console);
 
         String inputJson = mapper.writeValueAsString(inputConsole);
 
@@ -95,6 +111,7 @@ public class ConsoleControllerTest
     @Test
     public void shouldReturnConsoleById() throws Exception
     {
+
         doReturn(Optional.of(console)).when(repo).findById(1);
 
         ResultActions result = mockMvc.perform(
@@ -102,12 +119,31 @@ public class ConsoleControllerTest
                 .andExpect(status().isOk())
                 .andExpect((MockMvcResultMatchers.content().json(consoleJson))
                 );
+
+
     }
 
     @Test
     public void shouldReturnConsoleByManufacturer() throws Exception
     {
-        doReturn(Optional.of(console)).when(repo).findAllConsolesByManufacturer("Sony");
+        Console console2 = new Console();
+        console2.setModel("Playstation 5");
+        console2.setManufacturer("Sony");
+        console2.setMemoryAmount("825 GB");
+        console2.setProcessor("AMD Zen 2 CPU");
+        console2.setPrice(new BigDecimal("29.99"));
+        console2.setQuantity(5);
+
+        List<Console> consolesByManufacturers = new ArrayList<>();
+        consolesByManufacturers.add(console2);
+
+        doReturn(console2).when(repo).save(console2);
+
+        String inputJson = mapper.writeValueAsString(console2);
+
+        consoleJson = mapper.writeValueAsString(consolesByManufacturers);
+
+        doReturn(consolesByManufacturers).when(repo).findAllConsolesByManufacturer("Sony");
 
         ResultActions result = mockMvc.perform(
                         get("/consoles/manufacturer/Sony"))
@@ -119,8 +155,6 @@ public class ConsoleControllerTest
     @Test
     public void shouldBStatusOkForNonExistentConsoleId() throws Exception
     {
-        doReturn(Optional.empty()).when(repo).findById(3);
-
         mockMvc.perform(
                         get("/consoles/1234"))
                 .andExpect(status().isOk()
@@ -147,12 +181,23 @@ public class ConsoleControllerTest
                                 .content(consoleJson)
                                 .contentType(MediaType.APPLICATION_JSON)
                 )
-                .andExpect(status().isOk());
+                .andExpect(status().isNoContent());
     }
 
     @Test
     public void shouldDeleteByIdAndReturn200StatusCode() throws Exception {
-        mockMvc.perform(delete("/consoles/2")).andExpect(status().isOk());
+
+        Console console2 = new Console();
+        console2.setId(2);
+        console2.setModel("Playstation 5");
+        console2.setManufacturer("Sony");
+        console2.setMemoryAmount("825 GB");
+        console2.setProcessor("AMD Zen 2 CPU");
+        console2.setPrice(new BigDecimal("29.99"));
+        console2.setQuantity(5);
+
+        doReturn(console2).when(repo).save(console2);
+        mockMvc.perform(delete("/consoles/2")).andExpect(status().isNoContent());
     }
 
 }
